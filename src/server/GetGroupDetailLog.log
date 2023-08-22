@@ -1,0 +1,51 @@
+
+This is GoHttpBench, Version 0.1.9, https://github.com/parkghost/gohttpbench
+Author: Brandon Chen, Email: parkghost@gmail.com
+Licensed under the MIT license
+
+Benchmarking localhost (be patient)
+Completed 10000 requests
+Completed 20000 requests
+Completed 30000 requests
+Completed 40000 requests
+Completed 50000 requests
+Completed 60000 requests
+Completed 70000 requests
+Completed 80000 requests
+Completed 90000 requests
+Completed 100000 requests
+Finished 100000 requests
+
+
+Server Software:        
+Server Hostname:        localhost
+Server Port:            14000
+
+Document Path:          /ZeusService/GetGroupDetail
+Document Length:        69 bytes
+
+Concurrency Level:      100
+Time taken for tests:   29.08 seconds
+Complete requests:      100000
+Failed requests:        0
+HTML transferred:       6900000 bytes
+Requests per second:    3438.47 [#/sec] (mean)
+Time per request:       29.083 [ms] (mean)
+Time per request:       0.291 [ms] (mean, across all concurrent requests)
+HTML Transfer rate:     231.68 [Kbytes/sec] received
+
+Connection Times (ms)
+              min	mean[+/-sd]	median	max
+Total:        0     	0   47.23 	2 	775
+
+Percentage of the requests served within a certain time (ms)
+ 50%	 2
+ 66%	 7
+ 75%	 59
+ 80%	 63
+ 90%	 79
+ 95%	 133
+ 98%	 153
+ 99%	 194
+ 100%	 775 (longest request)
+

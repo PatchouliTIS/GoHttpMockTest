@@ -1,0 +1,143 @@
+syntax = "proto2";
+
+package youtu.zeus;
+option go_package = "api/youtu_zeus";
+
+enum Error
+{
+    //////////////////////////////////////
+    // PUBLIC ERROR [-101001, -102000]  //
+    //////////////////////////////////////
+    // [-101001, -101100]: param error
+    ERR_FEATURE_SIZE                   = -101003;
+    ERR_GROUP_ID_EMPTY                 = -101004;
+    ERR_ENTITY_ID_EMPTY                = -101005;
+    ERR_FEATURE_EMPTY                  = -101006;
+    ERR_TOPN_INVALID                   = -101007;
+    ERR_FEATURE_TYPE_INVALID           = -101008;
+    ERR_FEATURE_DIM_INVALID            = -101009;
+    ERR_FEATURE_IDX_INVALID            = -101010;
+    ERR_GROUP_ID_TOO_LONG              = -101011;
+    ERR_FEA_ID_TOO_LONG                = -101012;
+    ERR_FEA_ID_EMPTY                   = -101013;
+    ERR_ENTITY_ID_TOO_LONG             = -101014;
+    ERR_EXTEND_INFO_TOO_LONG           = -101015;
+    ERR_TOPN_TOO_LARGE                 = -101016;
+
+    //////////////////////////////////////
+    // LOGIC ERROR [-102001, -103000]  //
+    //////////////////////////////////////
+    //ERR_STORAGE                        = -102002 [deprecated = true];
+    ERR_GROUP_PAGES_NUM_EXCEED         = -102003;
+    ERR_FEA_ID_NOT_EXISTED             = -102004;
+    ERR_GROUP_SIZE_LIMIT               = -102005;
+    //ERR_PLATFORM                       = -102006 [deprecated = true];
+    ERR_PAGE_ID_REPEATED               = -102007;
+    //ERR_RETRIEVE_SERVER_HOST           = -102008 [deprecated = true];
+    ERR_DB_AGENT_RESULT                = -102009;
+    //ERR_NO_ENOUGH_GPU_RESOURCE         = -102010 [deprecated = true];
+    ERR_GET_CONFIG_FAILED              = -102011;
+    ERR_GET_CONFIG_NOT_FOUND           = -102012;
+    ERR_SET_CONFIG_FAILED              = -102013;
+    ERR_SET_CONFIG_VERSION_MISMATCH    = -102014;
+    ERR_DELETE_CONFIG_FAILED           = -102015;
+    ERR_GROUP_EXISTED                  = -102016;
+    ERR_ENTITY_ID_NOT_EXISTED          = -102017;
+    //ERR_INVALID_JSON_STRING            = -102018 [deprecated = true];
+    //ERR_JSON_MISSING_FIELD             = -102019 [deprecated = true];
+    //ERR_FILE_NOT_EXIST                 = -102020 [deprecated = true];
+    //ERR_FACE_NOT_EXISTED               = -102021 [deprecated = true];
+    //ERR_ROUTE_L5_CONFIG                = -102022 [deprecated = true];
+    ERR_GROUP_NOT_EXISTED              = -102023;
+    //ERR_REMOTE_NOT_REACHABLE           = -102024 [deprecated = true];
+    //ERR_REMOTE_CALL_FAILED             = -102025 [deprecated = true];
+    //ERR_INCORRECT_GROUP_ATTACHMENT     = -102026 [deprecated = true];
+    //ERR_MALLOC_FAIL                    = -102027 [deprecated = true];
+    //ERR_CUDA_GET_DEVICE_FAIL           = -102028 [deprecated = true];
+    //ERR_CUDA_SET_DEVICE_FAIL           = -102029 [deprecated = true];
+    //ERR_CUDA_FREE_FAIL                 = -102030 [deprecated = true];
+    //ERR_CUDA_MEMCPY_FAIL               = -102031 [deprecated = true];
+    //ERR_CUDA_MALLOC_FAIL               = -102032 [deprecated = true];
+    //ERR_CUBLAS_CREATE_HANDLE_FAIL      = -102033 [deprecated = true];
+    //ERR_CUBLAS_DESTROY_HANDLE_FAIL     = -102034 [deprecated = true];
+    //ERR_CUBLAS_CREATE_STREAM_FAIL      = -102035 [deprecated = true];
+    //ERR_CUBLAS_GET_VECTOR_FAIL         = -102036 [deprecated = true];
+    //ERR_GPU_MEM_BLOCK                  = -102037 [deprecated = true];
+    //ERR_NORMALIZE                      = -102038 [deprecated = true];
+    ERR_PAGE_NOT_EXISTED               = -102039;
+    //ERR_PAGE_FAULT                     = -102040 [deprecated = true];
+    //ERR_PAGE_DIRTY                     = -102041 [deprecated = true];
+    //ERR_GROUP_FAULT                    = -102042 [deprecated = true];
+    //ERR_ROUTE_CACHE_CORRUPT            = -102043 [deprecated = true];
+    ERR_ROUTE_NOT_FOUND                = -102044;
+    //ERR_ROUTE_ALREADY_EXIST            = -102045 [deprecated = true];
+    ERR_REMOTE_NOT_FOUND               = -102046;
+    ERR_ROUTE_HASH_NODE_EXIST          = -102047;
+    ERR_ROUTE_HASH_NODE_NOT_EXIST      = -102048;
+    ERR_ROUTE_HASH_WORKER_EXIST        = -102049;
+    ERR_ROUTE_HASH_WORKER_NOT_EXIST    = -102050;
+    ERR_ROUTE_HASH_NODE_NOT_EMPTY      = -102051;
+    ERR_GROUP_EMPTY                    = -102052;
+    ERR_PAGE_SYNC_CONFLICT             = -102053;
+    ERR_PAGE_SYNC_DISORDER             = -102054;
+    //ERR_PAGE_VERSION_CONFLICT          = -102055 [deprecated = true];
+    //ERR_SYNC_CONFIG_FAIL               = -102056 [deprecated = true];
+    ERR_DB_INSERT_DUPLICATE            = -102057;
+    ERR_GET_DISTRIBUTED_LOCK           = -102058;
+    ERR_GROUP_FULL                     = -102059;
+    //ERR_GROUP_ID_LENGTH_EXCEED         = -102060 [deprecated = true];
+    //ERR_FEA_ID_EMPTY                   = -102061 [deprecated = true];
+    //ERR_FEA_ID_LENGTH_EXCEED           = -102062 [deprecated = true];
+    ERR_FREE_PAGE_SIZE                 = -102063;
+    //ERR_CONCURRENCE_EXCEED             = -102064 [deprecated = true];
+    //ERR_ENTITY_ID_LENGTH_EXCEED        = -102065 [deprecated = true];
+    //ERR_EXTEND_INFO_LENGTH_EXCEED      = -102066 [deprecated = true];
+    ERR_CONFIG_FEATURE_SIZE            = -102067;
+    ERR_RAPID1VN_GALLERY_ADD           = -102068;
+    //ERR_RAPID1VN_GALLERY_NOT_EXIST     = -102069 [deprecated = true];
+    //ERR_RAPID1VN_GALLERY_UID_NOT_FOUND = -102070 [deprecated = true];
+    ERR_RAPID1VN_GALLERY_UPDATE        = -102071;
+    ERR_RAPID1VN_GALLERY_QUERY         = -102072;
+    //ERR_RAPID1VN_PROBE_NOT_EXIST       = -102073 [deprecated = true];
+    //ERR_RAPID1VN_DELETE                = -102074 [deprecated = true];
+    //ERR_RAPID1VN_INIT                  = -102075 [deprecated = true];
+    //ERR_RAPID1VN_QUERY                 = -102076 [deprecated = true];
+    ERR_DELETE_FEA                     = -102077;
+    //ERR_RAPID1VN_GALLERY_REPLACE       = -102078 [deprecated = true];
+    ERR_FEATURE_CONFIG_EXIST           = -102079;
+    ERR_FEATURE_CONFIG_NOT_EXIST       = -102080;
+    ERR_SYNC_SEARCHER_FAIL             = -102081;
+    //ERR_CUR_FEA_NOT_MATCH              = -102082 [deprecated = true];
+    //ERR_WRONG_FEATURE_IDX              = -102083 [deprecated = true];
+    ERR_FEATURE_IDX_NOT_CACHED         = -102084;
+    //ERR_CREATE_GALLERY_WRAPPER_ERR     = -102085 [deprecated = true];
+    ERR_GET_GROUP_CONF_FAIL            = -102086;
+    //ERR_CHECK_FEATURE_CONF_FAIL        = -102087 [deprecated = true];
+    ERR_PAGE_SYNC_FULL                 = -102088;
+    //ERR_L5_FORMAT_INVALID              = -102089 [deprecated = true];
+    //ERR_L5_GET_RT_FAIL                 = -102090 [deprecated = true];
+    ERR_GET_PLAIN_ROUTER_FAIL          = -102091;
+    ERR_ADD_JOB                        = -102092;
+    ERR_GROUP_ASYNC_DELETING           = -102093;
+    ERR_GROUP_PACK_INVALID             = -102094;
+    ERR_ADD_PAGE_TO_PACK               = -102095;
+    //ERR_GET_FEAS_FROM_DB_FAIL          = -102100 [deprecated = true];
+    //ERR_REBUILD_PAGE_FAIL              = -102101 [deprecated = true];
+    //ERR_WARM_UP_FAIL                   = -102102 [deprecated = true];
+    ERR_UPDATE_VERSION_FAIL            = -102103;
+    ERR_RAPID1VN_GALLERY_INIT          = -102104;
+    ERR_RAPID1VN_GALLERY_DELETE        = -102105;
+    ERR_RAPID1VN_GALLERY_GET           = -102106;
+    ERR_GROUP_VERSION_SYNC_DISORDER    = -102107;
+    ERR_GROUP_VERSION_NOT_EXIST        = -102108;
+    ERR_PAGE_DIFF_OVER_TOLERANCE       = -102109;
+    ERR_ROUTE_INVALID                  = -102110;
+
+    //leveldb
+    ERR_LEVELDB_PUT_FAIL               = -102111;
+    ERR_LEVELDB_GET_FAIL               = -102112;
+
+    //mercury
+    ERR_GPU_MEMORY_MANAGER_INIT_FAIL   = -102113;
+    ERR_NO_ENOUGH_MEM_CAPACITY         = -102114;
+}

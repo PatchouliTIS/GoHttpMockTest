@@ -1,0 +1,618 @@
+syntax = "proto2";
+option cc_generic_services = true;
+
+import "common.proto";
+import "job_manager.proto";
+
+package youtu.zeus;
+option go_package = "api/youtu_zeus";
+
+message FeatureConfig
+{
+    optional int32 dimension              = 1;
+    optional youtu.FeatureType feature_type = 2;
+    optional double scale                 = 3;
+    optional int32 feature_idx            = 4;
+}
+
+message CreateGroupReq
+{
+    optional string session_id            = 1;
+    optional string group_id              = 2;
+    optional Platform platform            = 3;
+    optional int32 capacity               = 4;
+    optional int32 dimension              = 5 [deprecated=true];
+    optional youtu.FeatureType feature_type     = 6 [deprecated=true];
+    optional FeatureConfig feature_config = 7;
+    optional int32 sub_groups_num         = 8 [default = 0];
+    optional int32 max_topn               = 9;
+    optional bool auto_sync               = 10 [default = false];
+}
+
+message CreateGroupRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+// Not recommend, pls use DeleteGroupAsync
+// Delete Group will delete group completely, including both
+// group's meta data and data
+// Even if an ERROR is returned, the data and metadata may be deleted
+message DeleteGroupReq
+{
+    optional string group_id        = 1;
+    optional string session_id      = 2;
+}
+
+message DeleteGroupRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message JobContent
+{
+    optional string group_id        = 1;
+}
+
+message GetDeleteGroupAsyncStateReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message GetDeleteGroupAsyncStateRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    optional youtu.job.JobInfo job_info = 4;
+}
+
+message DeletePageDataReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+}
+
+message DeletePageDataRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+// TruncateGroup will only delete group's data,
+// leaving group's meta data untouched
+message TruncateGroupReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message TruncateGroupRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+// If succ will also set current_feature = 2
+message AddFeatureConfigReq {
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional FeatureConfig feature_config = 3;
+}
+
+message AddFeatureConfigRsp {
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+// If succ will also set current_feature = 1-feature_idx
+message DeleteFeatureConfigReq {
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional int32 feature_idx      = 3;
+}
+
+message DeleteFeatureConfigRsp {
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message FeaItem
+{
+    optional string fea_id          = 1;
+    optional string entity_id       = 2;
+    optional bytes  feature_0       = 3;
+    optional bytes  feature_1       = 4;
+    optional bytes  extend_info     = 5;
+}
+
+// force=false: if has fea_id already exists will return ERR_DB_INSERT_DUPLICATE
+// force=true: 1.delete fea_items already exist in DB, if fail will return ERR_DELETE_FEA
+//             2.insert all request fea_items to DB, if fail it's uncertain whether those fea_ids exists in DB
+message AddFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated FeaItem items          = 3;
+    optional bool force             = 4 [default=false];
+    optional int32 feature_idx      = 5; // =0/1/2
+}
+
+message AddFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated string fea_ids         = 4; // return succ fea_id
+}
+
+// limit: request fea_ids < 10000
+message GetFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated string fea_ids         = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message GetFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    repeated FeaItem items          = 4;
+}
+
+message GetFeasByEntityReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string entity_id       = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message GetFeasByEntityRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    repeated FeaItem items          = 4;
+}
+
+// 1. items only supports size=1
+// 2. API will return error if items.size>1
+// 3. FeaItem should contain fea_id, entity_id,feature,extend_info;
+message UpdateFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated FeaItem items          = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message UpdateFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message UpdateEntityIdReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated string fea_ids         = 3;
+    optional string entity_id       = 4;
+}
+
+// return fea_ids whose entity_id updated successfully
+// not including fea_ids which are not existed
+message UpdateEntityIdRsp
+{
+    optional int32 errorcode        = 1;
+    optional string errormsg        = 2;
+    optional string session_id      = 3;
+    repeated string fea_ids         = 4; // succ fea_ids
+}
+
+// 1. features only supports size=1
+// 2. API will return error if features.size!=1
+// 3. check_empty = true: if feature_idx not empty will do not update
+message UpdateFeaturesReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated string fea_ids         = 3; // fea_ids和features相同idx对应
+    repeated bytes features_0       = 4;
+    repeated bytes features_1       = 5;
+    optional int32 feature_idx      = 6; // =0/1/2
+    optional bool check_empty       = 7 [default=false];
+    optional int32 sync_type        = 8; // 0:sync searcher; 1:do not sync;
+}
+
+message UpdateFeaturesRsp
+{
+    optional int32 errorcode        = 1;
+    optional string errormsg        = 2;
+    optional string session_id      = 3;
+}
+
+// trigger lazy page loading (page_version will auto-increment)
+// used after the page inventory feature is updated
+message TriggerPageUpdateReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message TriggerPageUpdateRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+// 1. extend_infos only supports size=1
+// 2. API will return error if extend_infos.size!=1
+message UpdateExtendInfosReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated string fea_ids         = 3; // fea_ids和extend_infos相同idx对应
+    repeated bytes extend_infos     = 4;
+}
+
+message UpdateExtendInfosRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message DeleteFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated string fea_ids         = 3;
+}
+
+// return fea_ids which are deleted succussfully
+// includeing fea_ids which not exsit
+message DeleteFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated string fea_ids         = 4;
+}
+
+// ONLY support single entity_id(we use repeated for compatiable in the future)
+message DeleteEntitysReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated string entity_ids      = 3;
+}
+
+// errorcode: OK, entity_id is totally deleted
+//            ERR_PARTIAL_OK, some fea_ids(beloing same entity_id) are not deleted
+// fea_ids: fea_ids which are deleted successfully(beloing same entity_id)
+message DeleteEntitysRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated string fea_ids         = 4;
+}
+
+message GetGroupSizeReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message GetGroupSizeRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    optional int32 total_size       = 4;
+}
+
+// limit: request group_size < 100000
+// return fea_ids which >= update_time
+// return all fea_ids while update_time=0
+message GetGroupFeaIdsReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional int64 update_time      = 3[default=0]; // timestamp in milliseconds
+}
+
+message GetGroupFeaIdsRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    repeated string fea_ids         = 4;
+}
+
+// limit: request limit < 100000
+message GetGroupEntityIdsReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional int32 offset           = 3;
+    optional int32 limit            = 4;
+}
+
+message GetGroupEntityIdsRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    repeated string entity_ids      = 4;
+}
+
+// Only be suit with small-scale group(<10000)
+// IO throughput is big problem if request a big group
+message GetGroupDetailReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional int32 feature_idx      = 3; // =0/1/2
+}
+
+message GetGroupDetailRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+    repeated FeaItem items          = 4;
+}
+
+message GetGroupPageIdsReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message GetGroupPageIdsRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated string page_ids        = 4;
+}
+
+// page_id empty: only sync Searcher to clear all features of this group
+// page_id not empty: clear features of this page in MySQL, but not sync to Searcher
+message ClearFeaturesReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+    optional int32 feature_idx      = 4; // =0/1
+}
+
+message ClearFeaturesRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message GetPageFeaEntityIdsReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+}
+
+message GetPageFeaEntityIdsRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated string fea_ids         = 4; // fea_id和entity_id相同idx对应
+    repeated string entity_ids      = 5;
+}
+
+message GetPageFeaturesReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+    optional int32 create_time      = 5; // create timestamp
+}
+
+message GetPageFeaturesRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated string fea_ids         = 4; // fea_id和feature相同idx对应
+    repeated bytes features_0       = 5;
+    repeated bytes features_1       = 6;
+}
+
+message RetrieveCandidate
+{
+    optional string fea_id          = 1;
+    optional string entity_id       = 2;
+    optional float confidence       = 3;
+    optional bytes extend_info      = 4;
+}
+
+message RetrieveItem
+{
+    repeated RetrieveCandidate result = 1;
+}
+
+message GroupRetrieveItem
+{
+    optional string group_id            = 1;
+    repeated RetrieveItem items         = 2;
+    optional int64 group_size           = 3; // < 0: invalid; >=0 valid size
+    optional int32 feature_idx          = 4;
+    optional int32 retrieve_timecost_ms = 5;
+}
+
+message RetrieveControl
+{
+    enum CacheStrategy {
+        FORCE_CHECK = 1;
+        NICE_CHECK  = 2;
+    };
+    optional CacheStrategy cache_strategy  = 1;
+    optional int32 cache_timeout_sec       = 2;
+}
+
+message GroupPacks {
+    repeated string pack_ids = 1;
+}
+
+message RetrieveReq
+{
+    optional string session_id      = 1;
+    repeated string group_ids       = 2;
+    repeated bytes  features        = 3;
+    optional uint32 topn            = 4;
+    optional float  threshold       = 5;
+    repeated int32 feature_idxs     = 6; // =0/1, 和group_ids相同idx对应
+    optional RetrieveControl control = 7;
+    repeated GroupPacks group_packs = 8;
+}
+
+message RetrieveRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated GroupRetrieveItem group_items = 4;
+}
+
+// group with touch_num < min_touch_num and group_size < min_group_size
+// will be DELETED from cache EXCEPT white_group_ids
+message TrimCacheReq
+{
+    optional string session_id      = 1;
+    optional uint64 stat_window_sec = 2;
+    optional int32 min_touch_num    = 3;
+    optional int32 min_group_size   = 4;
+    repeated string white_group_ids = 5;
+}
+
+message TrimCacheResult
+{
+    optional string searcher        = 1;
+    optional int32 errorcode        = 2;
+    repeated string group_ids       = 3;
+}
+
+message TrimCacheRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated TrimCacheResult results = 4;
+}
+
+message DeleteCacheReq
+{
+    optional string session_id      = 1;
+    repeated string group_ids       = 2;
+}
+
+message DeleteCacheResult
+{
+    optional string group_id        = 1;
+    optional int32 errorcode        = 2;
+    repeated string succ_searchers  = 3;
+    repeated string fail_searchers  = 4;
+}
+
+message DeleteCacheRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated DeleteCacheResult results = 4;
+}
+
+message WarmUpCacheReq
+{
+    optional string session_id      = 1;
+    repeated string group_ids       = 2;
+    repeated GroupPacks group_packs = 3;
+    optional bool force = 4;
+}
+
+message WarmUpCacheResult
+{
+    optional string group_id        = 1;
+    optional int32 errorcode        = 2;
+    repeated string succ_searchers  = 3;
+    repeated string fail_searchers  = 4;
+}
+
+message WarmUpCacheRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+    repeated WarmUpCacheResult results = 4;
+}
+
+message AsyncWarmUpGroupReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message AsyncWarmUpGroupRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message AsyncDeleteGroupReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message AsyncDeleteGroupRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message GetAllCacheGroupIdsReq
+{
+    optional string session_id      = 1;
+}
+
+message GetAllCacheGroupIdsRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+
+    repeated string group_ids       = 4;
+}

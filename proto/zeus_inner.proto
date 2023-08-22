@@ -1,0 +1,162 @@
+syntax = "proto2";
+import "zeus.proto";
+
+package youtu.zeus;
+option go_package = "api/youtu_zeus";
+/*
+   Communicate With Feature Manager
+*/
+message PageItem
+{
+    optional string page_id         = 1;
+    optional int64 version          = 2;
+    repeated FeaItem items          = 3;
+    optional int64 group_version    = 4;
+}
+
+message SyncAddFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated PageItem items         = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message SyncAddFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncDeleteFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated PageItem items         = 3; // FeaItem不填entity_id, feature_0, feature_1, extend_info
+}
+
+message SyncDeleteFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncUpdateFeasReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated PageItem items         = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message SyncUpdateFeasRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncUpdateEntityIdsReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated PageItem items         = 3; // FeaItem 不填feature, extend_info
+}
+
+message SyncUpdateEntityIdsRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncUpdateFeatureReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated PageItem items         = 3; // FeaItem不填entity_id, extend_info
+    optional int32 feature_idx      = 4; // =0/1/2
+}
+
+message SyncUpdateFeatureRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncUpdateExtendInfoReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    repeated PageItem items         = 3; // FeaItem不填entity_id, feature_0, feature_1
+}
+
+message SyncUpdateExtendInfoRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncTruncateGroupReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+}
+
+message SyncTruncateGroupRsp
+{
+    optional string session_id      = 1;
+    optional int32 errorcode        = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncClearFeaturesReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional int32 feature_idx      = 3; // =0/1
+}
+
+message SyncClearFeaturesRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncPageUpdateReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+    optional int32 feature_idx      = 4; // =0/1/2
+    optional int64 version          = 5;
+    optional int64 group_version    = 6;
+}
+
+message SyncPageUpdateRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}
+
+message SyncNoopReq
+{
+    optional string session_id      = 1;
+    optional string group_id        = 2;
+    optional string page_id         = 3;
+    optional int64 version          = 4;
+    optional int64 group_version    = 5;
+}
+
+message SyncNoopRsp
+{
+    optional string session_id      = 1;
+    optional int32  errorcode       = 2;
+    optional string errormsg        = 3;
+}

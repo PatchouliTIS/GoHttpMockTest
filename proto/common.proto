@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+package youtu;
+option go_package = "api/youtu";
+
+enum Platform {
+    CPU = 0;
+    GPU = 1;
+}
+
+enum FeatureType {
+    INVALID = -1;
+    INT8 = 0;
+    FLOAT = 1;
+    INT7 = 2;
+}
+
+message Point {
+    optional int32 x = 1;
+    optional int32 y = 2;
+}
+
+message Pointf {
+    optional float x = 1;
+    optional float y = 2;
+}
+
+message Rect {
+    optional int32 x = 1;
+    optional int32 y = 2;
+    optional int32 width = 3;
+    optional int32 height = 4;
+}
+
+message Rectf {
+    optional float x = 1;
+    optional float y = 2;
+    optional float width = 3;
+    optional float height = 4;
+}
+
+message RawImage {
+    optional bytes image = 1;
+}
+
+message RotateRectf {
+    optional float cx = 1;
+    optional float cy = 2;
+    optional float width = 3;
+    optional float height = 4;
+    optional float rotate = 5;
+}
+
+message ImageMat {
+    optional int32 width = 1;
+    optional int32 height = 2;
+    optional bytes data = 3;
+    optional int32 cv_type = 4;
+}
+
