@@ -37,18 +37,27 @@ var (
 		FeatureIdx:  &FeatureIdx,
 	}
 
-	StructMap = map[string]proto.Message{
+	// StructMap = map[string]proto.Message{
+	StructMap = map[string]interface{}{
 		"AddFeasReq":       &yz.AddFeasReq{SessionId: &Session_id},
 		"AddFeasRsp":       &yz.AddFeasRsp{SessionId: &Session_id},
 		"RetrieveReq":      &yz.RetrieveReq{SessionId: &Session_id},
 		"RetrieveRsp":      &yz.RetrieveRsp{SessionId: &Session_id},
 		"TruncateGroupReq": &yz.TruncateGroupReq{SessionId: &Session_id},
+		"TruncateGroupRsp": &yz.TruncateGroupRsp{},
 		"CreateGroupReq": &yz.CreateGroupReq{
 			SessionId:     &Session_id,
 			GroupId:       &Group_id,
 			Platform:      &CPU_Platform,
 			FeatureConfig: &Feature,
 		},
+		"CreateGroupRsp": &yz.CreateGroupRsp{},
+		"GetGroupDetailReq": &yz.GetGroupDetailReq{
+			SessionId:  &Session_id,
+			GroupId:    &Group_id,
+			FeatureIdx: &FeatureIdx,
+		},
+		"GetGroupDetailRsp": &yz.GetGroupDetailRsp{},
 	}
 )
 
@@ -63,20 +72,99 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 	reqName := pathSlice[len(pathSlice)-1] + "Req"
 	rsqName := pathSlice[len(pathSlice)-1] + "Rsp"
 
-	req := StructMap[reqName]
-	req.ProtoMessage()
-	proto.Unmarshal(body, req)
+	var mockRspBytes []byte
+	// 使用 interface{} 断言来获取值
+	// req := StructMap[reqName]
+	switch reqName {
+	case "Retrieve":
+		req, ok := StructMap[reqName].(*yz.RetrieveReq)
+		if ok {
+			// 解析获取的POST body
+			// req.ProtoMessage()
+			proto.Unmarshal(body, req)
+		} else {
+			panic("interface assert req failed. \n")
+		}
 
-	// sid := req.String()
+		rsp, ok := StructMap[rsqName].(*yz.RetrieveRsp)
+		if ok {
+			rsp.SessionId = req.SessionId
+			mockRspBytes, _ = proto.Marshal(rsp)
+		} else {
+			panic("interface assert rsp failed. \n")
+		}
 
-	rsp := StructMap[rsqName]
+	case "AddFeas":
+		req, ok := StructMap[reqName].(*yz.AddFeasReq)
+		if ok {
+			// 解析获取的POST body
+			// req.ProtoMessage()
+			proto.Unmarshal(body, req)
+		} else {
+			panic("interface assert req failed. \n")
+		}
 
-	// rsp := yz.AddFeasRsp{
-	// 	SessionId: &sid,
-	// 	Errorcode: &Error_code,
-	// 	Errormsg:  &Error_msg,
-	// }
-	mockRspBytes, _ := proto.Marshal(rsp)
+		rsp, ok := StructMap[rsqName].(*yz.AddFeasRsp)
+		if ok {
+			rsp.SessionId = req.SessionId
+			mockRspBytes, _ = proto.Marshal(rsp)
+		} else {
+			panic("interface assert rsp failed. \n")
+		}
+	case "TruncateGroup":
+		req, ok := StructMap[reqName].(*yz.TruncateGroupReq)
+		if ok {
+			// 解析获取的POST body
+			// req.ProtoMessage()
+			proto.Unmarshal(body, req)
+		} else {
+			panic("interface assert req failed. \n")
+		}
+
+		rsp, ok := StructMap[rsqName].(*yz.TruncateGroupRsp)
+		if ok {
+			rsp.SessionId = req.SessionId
+			mockRspBytes, _ = proto.Marshal(rsp)
+		} else {
+			panic("interface assert rsp failed. \n")
+		}
+	case "CreateGroup":
+		req, ok := StructMap[reqName].(*yz.CreateGroupReq)
+		if ok {
+			// 解析获取的POST body
+			// req.ProtoMessage()
+			proto.Unmarshal(body, req)
+		} else {
+			panic("interface assert req failed. \n")
+		}
+
+		rsp, ok := StructMap[rsqName].(*yz.CreateGroupRsp)
+		if ok {
+			rsp.SessionId = req.SessionId
+			mockRspBytes, _ = proto.Marshal(rsp)
+		} else {
+			panic("interface assert rsp failed. \n")
+		}
+	case "GetGroupDetail":
+		req, ok := StructMap[reqName].(*yz.GetGroupDetailReq)
+		if ok {
+			// 解析获取的POST body
+			// req.ProtoMessage()
+			proto.Unmarshal(body, req)
+		} else {
+			panic("interface assert req failed. \n")
+		}
+
+		rsp, ok := StructMap[rsqName].(*yz.GetGroupDetailRsp)
+		if ok {
+			rsp.SessionId = req.SessionId
+			mockRspBytes, _ = proto.Marshal(rsp)
+		} else {
+			panic("interface assert rsp failed. \n")
+		}
+	default:
+		panic("请求的路径无对应Handle Function!!!\n")
+	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/x-protobuf")
