@@ -6,14 +6,15 @@ import (
 	"net/http/httptest"
 	"testing"
 	yz "zeus/api/youtu_zeus"
+	"zeus/src/common"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestRetrieve(t *testing.T) {
 
 	retrieveReq := yz.RetrieveReq{
-		SessionId: &Session_id,
+		SessionId: &common.Session_id,
 	}
 
 	// 准备httptest
@@ -27,8 +28,8 @@ func TestRetrieve(t *testing.T) {
 
 		rsp := yz.RetrieveRsp{
 			SessionId: req.SessionId,
-			Errorcode: &Error_code,
-			Errormsg:  &Error_msg,
+			Errorcode: &common.Error_code,
+			Errormsg:  &common.Error_msg,
 		}
 		mockRspBytes, _ := proto.Marshal(&rsp)
 
@@ -56,7 +57,7 @@ func TestRetrieve(t *testing.T) {
 
 func TestAddFeas(t *testing.T) {
 	addFeasReq := yz.AddFeasReq{
-		SessionId: &Session_id,
+		SessionId: &common.Session_id,
 	}
 
 	// 准备httptest
@@ -69,8 +70,8 @@ func TestAddFeas(t *testing.T) {
 
 		rsp := yz.AddFeasRsp{
 			SessionId: req.SessionId,
-			Errorcode: &Error_code,
-			Errormsg:  &Error_msg,
+			Errorcode: &common.Error_code,
+			Errormsg:  &common.Error_msg,
 		}
 		mockRspBytes, _ := proto.Marshal(&rsp)
 
@@ -97,10 +98,10 @@ func TestAddFeas(t *testing.T) {
 
 func TestCreateGroup(t *testing.T) {
 	createGroupReq := yz.CreateGroupReq{
-		SessionId:     &Session_id,
-		GroupId:       &Group_id,
-		Platform:      &CPU_Platform,
-		FeatureConfig: &Feature,
+		SessionId:     &common.Session_id,
+		GroupId:       &common.Group_id,
+		Platform:      &common.CPU_Platform,
+		FeatureConfig: &common.Feature,
 	}
 
 	// 准备httptest
@@ -113,8 +114,8 @@ func TestCreateGroup(t *testing.T) {
 
 		rsp := yz.CreateGroupRsp{
 			SessionId: req.SessionId,
-			Errorcode: &Error_code,
-			Errormsg:  &Error_msg,
+			Errorcode: &common.Error_code,
+			Errormsg:  &common.Error_msg,
 		}
 		mockRspBytes, _ := proto.Marshal(&rsp)
 

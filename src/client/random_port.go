@@ -6,59 +6,10 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"zeus/api/youtu"
 	yz "zeus/api/youtu_zeus"
+	"zeus/src/common"
 
-	"github.com/golang/protobuf/proto"
-)
-
-const (
-	content_type = "application/x-protobuf"
-	ZeusSrv      = "ZeusService"
-)
-
-var (
-	Error_code       int32             = 0
-	Session_id       string            = "114514"
-	Group_id         string            = "75th Ranger Regiment"
-	Error_msg        string            = ""
-	CPU_Platform     youtu.Platform    = 0
-	GPU_Platform     youtu.Platform    = 1
-	Dimension        int32             = 5
-	FeatureType_INT8 youtu.FeatureType = 1
-	FeatureIdx       int32             = 0
-	Scale            float64           = 1.4038
-	FeaId            string            = "YJSP"
-	EntityId         string            = "Koumakan"
-	Feature                            = yz.FeatureConfig{
-		Dimension:   &Dimension,
-		FeatureType: &(FeatureType_INT8),
-		Scale:       &Scale,
-		FeatureIdx:  &FeatureIdx,
-	}
-
-	// StructMap = map[string]proto.Message{
-	StructMap = map[string]interface{}{
-		"AddFeasReq":       &yz.AddFeasReq{SessionId: &Session_id},
-		"AddFeasRsp":       &yz.AddFeasRsp{SessionId: &Session_id},
-		"RetrieveReq":      &yz.RetrieveReq{SessionId: &Session_id},
-		"RetrieveRsp":      &yz.RetrieveRsp{SessionId: &Session_id},
-		"TruncateGroupReq": &yz.TruncateGroupReq{SessionId: &Session_id},
-		"TruncateGroupRsp": &yz.TruncateGroupRsp{},
-		"CreateGroupReq": &yz.CreateGroupReq{
-			SessionId:     &Session_id,
-			GroupId:       &Group_id,
-			Platform:      &CPU_Platform,
-			FeatureConfig: &Feature,
-		},
-		"CreateGroupRsp": &yz.CreateGroupRsp{},
-		"GetGroupDetailReq": &yz.GetGroupDetailReq{
-			SessionId:  &Session_id,
-			GroupId:    &Group_id,
-			FeatureIdx: &FeatureIdx,
-		},
-		"GetGroupDetailRsp": &yz.GetGroupDetailRsp{},
-	}
+	"google.golang.org/protobuf/proto"
 )
 
 // main access logic
@@ -77,7 +28,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 	// req := StructMap[reqName]
 	switch reqName {
 	case "Retrieve":
-		req, ok := StructMap[reqName].(*yz.RetrieveReq)
+		req, ok := common.StructMap[reqName].(*yz.RetrieveReq)
 		if ok {
 			// 解析获取的POST body
 			// req.ProtoMessage()
@@ -86,7 +37,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert req failed. \n")
 		}
 
-		rsp, ok := StructMap[rsqName].(*yz.RetrieveRsp)
+		rsp, ok := common.StructMap[rsqName].(*yz.RetrieveRsp)
 		if ok {
 			rsp.SessionId = req.SessionId
 			mockRspBytes, _ = proto.Marshal(rsp)
@@ -95,7 +46,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "AddFeas":
-		req, ok := StructMap[reqName].(*yz.AddFeasReq)
+		req, ok := common.StructMap[reqName].(*yz.AddFeasReq)
 		if ok {
 			// 解析获取的POST body
 			// req.ProtoMessage()
@@ -104,7 +55,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert req failed. \n")
 		}
 
-		rsp, ok := StructMap[rsqName].(*yz.AddFeasRsp)
+		rsp, ok := common.StructMap[rsqName].(*yz.AddFeasRsp)
 		if ok {
 			rsp.SessionId = req.SessionId
 			mockRspBytes, _ = proto.Marshal(rsp)
@@ -112,7 +63,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert rsp failed. \n")
 		}
 	case "TruncateGroup":
-		req, ok := StructMap[reqName].(*yz.TruncateGroupReq)
+		req, ok := common.StructMap[reqName].(*yz.TruncateGroupReq)
 		if ok {
 			// 解析获取的POST body
 			// req.ProtoMessage()
@@ -121,7 +72,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert req failed. \n")
 		}
 
-		rsp, ok := StructMap[rsqName].(*yz.TruncateGroupRsp)
+		rsp, ok := common.StructMap[rsqName].(*yz.TruncateGroupRsp)
 		if ok {
 			rsp.SessionId = req.SessionId
 			mockRspBytes, _ = proto.Marshal(rsp)
@@ -129,7 +80,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert rsp failed. \n")
 		}
 	case "CreateGroup":
-		req, ok := StructMap[reqName].(*yz.CreateGroupReq)
+		req, ok := common.StructMap[reqName].(*yz.CreateGroupReq)
 		if ok {
 			// 解析获取的POST body
 			// req.ProtoMessage()
@@ -138,7 +89,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert req failed. \n")
 		}
 
-		rsp, ok := StructMap[rsqName].(*yz.CreateGroupRsp)
+		rsp, ok := common.StructMap[rsqName].(*yz.CreateGroupRsp)
 		if ok {
 			rsp.SessionId = req.SessionId
 			mockRspBytes, _ = proto.Marshal(rsp)
@@ -146,7 +97,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert rsp failed. \n")
 		}
 	case "GetGroupDetail":
-		req, ok := StructMap[reqName].(*yz.GetGroupDetailReq)
+		req, ok := common.StructMap[reqName].(*yz.GetGroupDetailReq)
 		if ok {
 			// 解析获取的POST body
 			// req.ProtoMessage()
@@ -155,7 +106,7 @@ func HandleRequst(w http.ResponseWriter, r *http.Request) {
 			panic("interface assert req failed. \n")
 		}
 
-		rsp, ok := StructMap[rsqName].(*yz.GetGroupDetailRsp)
+		rsp, ok := common.StructMap[rsqName].(*yz.GetGroupDetailRsp)
 		if ok {
 			rsp.SessionId = req.SessionId
 			mockRspBytes, _ = proto.Marshal(rsp)
@@ -184,8 +135,8 @@ func Retrieve(api string, req *yz.RetrieveReq) (*yz.RetrieveRsp, error) {
 	body := bytes.NewReader(reqProto)
 
 	// 发起 POST Request
-	url := fmt.Sprintf("%s/%s/Retrieve", api, ZeusSrv)
-	resp, _ := http.Post(url, content_type, body)
+	url := fmt.Sprintf("%s/%s/Retrieve", api, common.ZeusSrv)
+	resp, _ := http.Post(url, common.Content_type, body)
 	// httpReq, err := http.NewRequest(http.MethodPost, url, body)
 	// if err != nil {
 	// 	log.Fatalf("New Request Failed:%s", err)
@@ -220,8 +171,8 @@ func AddFeas(api string, req *yz.AddFeasReq) (*yz.AddFeasRsp, error) {
 	}
 	body := strings.NewReader(string(reqProto))
 
-	url := fmt.Sprintf("%s/%s/AddFeas", api, ZeusSrv)
-	resp, _ := http.Post(url, content_type, body)
+	url := fmt.Sprintf("%s/%s/AddFeas", api, common.ZeusSrv)
+	resp, _ := http.Post(url, common.Content_type, body)
 
 	if resp.StatusCode != http.StatusOK {
 		return &yz.AddFeasRsp{}, fmt.Errorf("response didn't get Status 200 but %s instead", resp.Status)
@@ -253,8 +204,8 @@ func CreateGroup(api string, req *yz.CreateGroupReq) (*yz.CreateGroupRsp, error)
 	body := bytes.NewReader(reqProto)
 
 	// 发起 POST Request
-	url := fmt.Sprintf("%s/%s/CreateGroup", api, ZeusSrv)
-	resp, _ := http.Post(url, content_type, body)
+	url := fmt.Sprintf("%s/%s/CreateGroup", api, common.ZeusSrv)
+	resp, _ := http.Post(url, common.Content_type, body)
 	// httpReq, err := http.NewRequest(http.MethodPost, url, body)
 	// if err != nil {
 	// 	log.Fatalf("New Request Failed:%s", err)
