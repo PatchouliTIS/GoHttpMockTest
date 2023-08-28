@@ -1,13 +1,14 @@
 package client
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"testing"
 	"time"
-	yz "zeus/api/youtu_zeus"
 	"zeus/src/common"
+	"zeus/src/server"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -19,10 +20,14 @@ var (
 
 func TestMain(m *testing.M) {
 	// 本地服务器注册对应的 RESTful API 接口
-	http.HandleFunc("http://127.0.0.1:14000/ZeusService/CreateGroup", HandleRequst)
-	http.HandleFunc("http://127.0.0.1:14000/ZeusService/AddFeas", HandleRequst)
-	http.HandleFunc("http://127.0.0.1:14000/ZeusService/TruncateGroup", HandleRequst)
-	http.HandleFunc("http://127.0.0.1:14000/ZeusService/GetGroupDetail", HandleRequst)
+	// http.HandleFunc("http://127.0.0.1:14000/ZeusService/CreateGroup", HandleRequst)
+	// http.HandleFunc("http://127.0.0.1:14000/ZeusService/AddFeas", HandleRequst)
+	// http.HandleFunc("http://127.0.0.1:14000/ZeusService/TruncateGroup", HandleRequst)
+	// http.HandleFunc("http://127.0.0.1:14000/ZeusService/GetGroupDetail", HandleRequst)
+	http.HandleFunc("/ZeusService/CreateGroup", server.HandleRequst)
+	http.HandleFunc("/ZeusService/AddFeas", server.HandleRequst)
+	http.HandleFunc("/ZeusService/TruncateGroup", server.HandleRequst)
+	http.HandleFunc("/ZeusService/GetGroupDetail", server.HandleRequst)
 	go http.ListenAndServe(":14000", nil)
 	time.Sleep(1 * time.Second)
 
@@ -35,30 +40,71 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
-func TestClientAddFeas(t *testing.T) {
+func TestClient(t *testing.T) {
 	// 发出请求，接收数据
-	addFeasReq, err := NewHTTPRequest(config, "AddFeas")
-	if err != nil {
-		panic(err)
+	API_name := map[string]string{
+		"AddFeas":        "114514",
+		"CreateGroup":    "114514",
+		"GetGroupDetail": "114514",
+		"TruncateGroup":  "114514",
 	}
 
-	respBody, err := client.Do(addFeasReq)
-	if err != nil {
-		panic(err)
-	}
+	for name, session := range API_name {
+		req, expectResp, err := NewHTTPRequest(config, name)
+		if err != nil {
+			panic(err)
+		}
 
-	respBytes, err := io.ReadAll(respBody.Body)
-	if err != nil {
-		panic(err)
-	}
+		// 通过 ProtoReflect 动态获取结构体的字段
+		respReflect := expectResp.ProtoReflect()
+		sessionDescriber := respReflect.Descriptor().Fields().ByName("session_id")
+		sessionInterface := respReflect.Get(sessionDescriber)
+		sessionId, ok := sessionInterface.Interface().(string)
+		if ok {
+			fmt.Printf("Current Session Id : %v\n", sessionId)
+		} else {
+			panic(">>> protoreflect interface wrong <<<\n")
+		}
 
-	// TODO: 使用Client的方法没法自定义响应处理逻辑
-	resp, ok := common.StructMap["AddFeasRsp"].(*yz.AddFeasRsp)
-	if ok {
-		proto.Unmarshal(respBytes, resp)
-		t.Logf("deserialize data success: session_id -> %s", *resp.SessionId)
-	} else {
-		t.Errorf("deserialize data failed: AddFeasRsp")
+		respBody, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+
+		respBytes, err := io.ReadAll(respBody.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		defer respBody.Body.Close()
+
+		// TODO: 通过 ProtoReflect 获取不同内容
+		resp, ok := common.StructMap[name+"Rsp"].(proto.Message)
+		if ok {
+			err = proto.Unmarshal(respBytes, resp)
+			if err != nil {
+				fmt.Printf("got message for u : %s", string(respBytes))
+				panic(err)
+			}
+
+			// 通过反射获取值
+			reflect := resp.ProtoReflect()
+			describer := reflect.Descriptor().Fields().ByName("session_id")
+			value, ok := reflect.Get(describer).Interface().(string)
+			if ok {
+				t.Logf("deserialize data success: session_id -> %s", value)
+				if value != session {
+					t.Errorf("We Have Wrong Response, expect %s but get %s", session, value)
+				} else {
+					t.Logf("%s rpc call success!\n ------------------------------------", name)
+				}
+			} else {
+				t.Errorf(">>> protoreflect interface convert failed <<<")
+			}
+
+		} else {
+			t.Errorf("deserialize data failed: %sRsp", name)
+		}
 	}
 
 }

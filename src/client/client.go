@@ -16,21 +16,22 @@ func NewClient() *http.Client {
 	return &http.Client{Transport: common.Transport}
 }
 
-func NewHTTPRequest(config *common.Config, rpcName string) (request *http.Request, err error) {
+func NewHTTPRequest(config *common.Config, rpcName string) (request *http.Request, respBody proto.Message, err error) {
 
 	var body io.Reader
 
 	if config.Method == "POST" || config.Method == "PUT" {
 		// body = bytes.NewReader(config.bodyContent)
 		// 根据传入的调用名读取 HTTP Request
-		reqBody, _ := util.GetReqAndRsp(rpcName)
+		var reqBody proto.Message
+		reqBody, respBody = util.GetReqAndRsp(rpcName)
 		reqBytes, err := proto.Marshal(reqBody)
 		if err != nil {
 			panic(err)
 		}
 		body = bytes.NewReader(reqBytes)
 	}
-
+	//
 	route := string(config.Host + ":" + config.Port + "/" + common.ZeusSrv + "/" + rpcName)
 	// route := string("/" + common.ZeusSrv + "/" + rpcName)
 	fmt.Println(route)
