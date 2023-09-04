@@ -31,9 +31,9 @@ func NewHTTPRequest(config *common.Config, rpcName string) (request *http.Reques
 		}
 		body = bytes.NewReader(reqBytes)
 	}
-	//
+
+	// 拼接 RRESTful API
 	route := string(config.Host + ":" + config.Port + "/" + common.ZeusSrv + "/" + rpcName)
-	// route := string("/" + common.ZeusSrv + "/" + rpcName)
 	fmt.Println(route)
 	request, err = http.NewRequest(config.Method, route, body)
 	if err != nil {

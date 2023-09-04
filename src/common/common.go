@@ -35,12 +35,12 @@ var (
 
 	// StructMap = map[string]proto.Message{
 	StructMap = map[string]interface{}{
-		"AddFeasReq":       &yz.AddFeasReq{SessionId: &Session_id},
-		"AddFeasRsp":       &yz.AddFeasRsp{SessionId: &Session_id},
-		"RetrieveReq":      &yz.RetrieveReq{SessionId: &Session_id},
-		"RetrieveRsp":      &yz.RetrieveRsp{SessionId: &Session_id},
-		"TruncateGroupReq": &yz.TruncateGroupReq{SessionId: &Session_id},
-		"TruncateGroupRsp": &yz.TruncateGroupRsp{},
+		"AddFeasReq":  &yz.AddFeasReq{SessionId: &Session_id},
+		"AddFeasRsp":  &yz.AddFeasRsp{SessionId: &Session_id},
+		"RetrieveReq": &yz.RetrieveReq{SessionId: &Session_id},
+		"RetrieveRsp": &yz.RetrieveRsp{SessionId: &Session_id},
+		"GetFeasReq":  &yz.GetFeasReq{SessionId: &Session_id},
+		"GetFeasRsp":  &yz.GetFeasRsp{SessionId: &Session_id},
 		"CreateGroupReq": &yz.CreateGroupReq{
 			SessionId:     &Session_id,
 			GroupId:       &Group_id,
@@ -48,12 +48,6 @@ var (
 			FeatureConfig: &Feature,
 		},
 		"CreateGroupRsp": &yz.CreateGroupRsp{},
-		"GetGroupDetailReq": &yz.GetGroupDetailReq{
-			SessionId:  &Session_id,
-			GroupId:    &Group_id,
-			FeatureIdx: &FeatureIdx,
-		},
-		"GetGroupDetailRsp": &yz.GetGroupDetailRsp{},
 	}
 
 	// skip certification check for self-signed certificates
@@ -97,8 +91,8 @@ func (c *Config) LoadConfig() error {
 	c.Method = http.MethodPost
 	c.Gzip = true
 	c.KeepAlive = true
-	c.Host = "http://127.0.0.1"
-	c.Port = "14000"
+	c.Host = "http://11.149.28.252"
+	c.Port = "12110"
 	c.ContentType = "application/x-protobuf"
 
 	return nil

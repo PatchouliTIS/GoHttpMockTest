@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func TestRetrieve(t *testing.T) {
+func TestSelfRetrieve(t *testing.T) {
 
 	retrieveReq := yz.RetrieveReq{
 		SessionId: &common.Session_id,
@@ -28,8 +28,8 @@ func TestRetrieve(t *testing.T) {
 
 		rsp := yz.RetrieveRsp{
 			SessionId: req.SessionId,
-			Errorcode: &common.Error_code,
-			Errormsg:  &common.Error_msg,
+			ErrorCode: &common.Error_code,
+			ErrorMsg:  &common.Error_msg,
 		}
 		mockRspBytes, _ := proto.Marshal(&rsp)
 
@@ -55,7 +55,7 @@ func TestRetrieve(t *testing.T) {
 
 }
 
-func TestAddFeas(t *testing.T) {
+func TestSelfAddFeas(t *testing.T) {
 	addFeasReq := yz.AddFeasReq{
 		SessionId: &common.Session_id,
 	}
@@ -70,8 +70,8 @@ func TestAddFeas(t *testing.T) {
 
 		rsp := yz.AddFeasRsp{
 			SessionId: req.SessionId,
-			Errorcode: &common.Error_code,
-			Errormsg:  &common.Error_msg,
+			ErrorCode: &common.Error_code,
+			ErrorMsg:  &common.Error_msg,
 		}
 		mockRspBytes, _ := proto.Marshal(&rsp)
 
@@ -114,8 +114,8 @@ func TestCreateGroup(t *testing.T) {
 
 		rsp := yz.CreateGroupRsp{
 			SessionId: req.SessionId,
-			Errorcode: &common.Error_code,
-			Errormsg:  &common.Error_msg,
+			ErrorCode: &common.Error_code,
+			ErrorMsg:  &common.Error_msg,
 		}
 		mockRspBytes, _ := proto.Marshal(&rsp)
 

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	yz "zeus/api/youtu_zeus"
 	"zeus/src/common"
 
@@ -44,19 +45,7 @@ func GetReqAndRsp(name string) (proto.Message, proto.Message) {
 			panic("interface assert rsp failed. \n")
 		}
 		return req, rsp
-	case "TruncateGroup":
-		req, ok := common.StructMap[reqName].(*yz.TruncateGroupReq)
-		if !ok {
-			panic("interface assert req failed. \n")
-		}
 
-		rsp, ok := common.StructMap[rsqName].(*yz.TruncateGroupRsp)
-		if ok {
-			rsp.SessionId = req.SessionId
-		} else {
-			panic("interface assert rsp failed. \n")
-		}
-		return req, rsp
 	case "CreateGroup":
 		req, ok := common.StructMap[reqName].(*yz.CreateGroupReq)
 		if !ok {
@@ -70,13 +59,14 @@ func GetReqAndRsp(name string) (proto.Message, proto.Message) {
 			panic("interface assert rsp failed. \n")
 		}
 		return req, rsp
-	case "GetGroupDetail":
-		req, ok := common.StructMap[reqName].(*yz.GetGroupDetailReq)
+
+	case "GetFeas":
+		req, ok := common.StructMap[reqName].(*yz.GetFeasReq)
 		if !ok {
 			panic("interface assert req failed. \n")
 		}
 
-		rsp, ok := common.StructMap[rsqName].(*yz.GetGroupDetailRsp)
+		rsp, ok := common.StructMap[rsqName].(*yz.GetFeasRsp)
 		if ok {
 			rsp.SessionId = req.SessionId
 		} else {
@@ -84,6 +74,6 @@ func GetReqAndRsp(name string) (proto.Message, proto.Message) {
 		}
 		return req, rsp
 	default:
-		panic("请求的路径无对应Handle Function!!!\n")
+		panic(fmt.Sprintf("请求的路径 %s 无对应Handle Function!!!\n", name))
 	}
 }
