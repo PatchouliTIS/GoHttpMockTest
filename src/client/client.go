@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -25,7 +26,7 @@ func NewHTTPRequest(config *common.Config, rpcName string) (request *http.Reques
 		// 根据传入的调用名读取 HTTP Request
 		var reqBody proto.Message
 		reqBody, respBody = util.GetReqAndRsp(rpcName)
-		reqBytes, err := proto.Marshal(reqBody)
+		reqBytes, err := json.Marshal(reqBody)
 		if err != nil {
 			panic(err)
 		}
@@ -40,7 +41,8 @@ func NewHTTPRequest(config *common.Config, rpcName string) (request *http.Reques
 		return
 	}
 
-	request.Header.Set("Content-Type", config.ContentType)
+	// 请求格式 JSON / ProtoBuf
+	request.Header.Set("Content-Type", config.ContentJSONType)
 	// request.Header.Set("User-Agent", config.userAgent)
 
 	// if config.keepAlive {

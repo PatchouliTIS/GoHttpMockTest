@@ -96,7 +96,7 @@ func TestSelfAddFeas(t *testing.T) {
 	}
 }
 
-func TestCreateGroup(t *testing.T) {
+func TestSelfCreateGroup(t *testing.T) {
 	createGroupReq := yz.CreateGroupReq{
 		SessionId:     &common.Session_id,
 		GroupId:       &common.Group_id,

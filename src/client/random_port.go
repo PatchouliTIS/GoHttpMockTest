@@ -23,7 +23,7 @@ func Retrieve(api string, req *yz.RetrieveReq) (*yz.RetrieveRsp, error) {
 
 	// 发起 POST Request
 	url := fmt.Sprintf("%s/%s/Retrieve", api, common.ZeusSrv)
-	resp, _ := http.Post(url, common.Content_type, body)
+	resp, _ := http.Post(url, common.ContentJSONType, body)
 	// httpReq, err := http.NewRequest(http.MethodPost, url, body)
 	// if err != nil {
 	// 	log.Fatalf("New Request Failed:%s", err)
@@ -59,7 +59,7 @@ func AddFeas(api string, req *yz.AddFeasReq) (*yz.AddFeasRsp, error) {
 	body := strings.NewReader(string(reqProto))
 
 	url := fmt.Sprintf("%s/%s/AddFeas", api, common.ZeusSrv)
-	resp, _ := http.Post(url, common.Content_type, body)
+	resp, _ := http.Post(url, common.ContentJSONType, body)
 
 	if resp.StatusCode != http.StatusOK {
 		return &yz.AddFeasRsp{}, fmt.Errorf("response didn't get Status 200 but %s instead", resp.Status)
@@ -92,7 +92,7 @@ func CreateGroup(api string, req *yz.CreateGroupReq) (*yz.CreateGroupRsp, error)
 
 	// 发起 POST Request
 	url := fmt.Sprintf("%s/%s/CreateGroup", api, common.ZeusSrv)
-	resp, _ := http.Post(url, common.Content_type, body)
+	resp, _ := http.Post(url, common.ContentJSONType, body)
 	// httpReq, err := http.NewRequest(http.MethodPost, url, body)
 	// if err != nil {
 	// 	log.Fatalf("New Request Failed:%s", err)
